@@ -1,17 +1,17 @@
 from flask import Flask, render_template,flash,request,url_for,redirect,session
-from content_management import Content
-from dbconnect import connection
-from wtforms import Form
-from passlib.hash import sha256_crypt
-from MySQLdb import escape_string as thwart
-import gc
+#from content_management import Content
+#from dbconnect import connection
+#from wtforms import Form
+#from passlib.hash import sha256_crypt
+#from MySQLdb import escape_string as thwart
+#import gc
 
 app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    return "Stock Screener"
-
+    return render_template("main.html")
+"""
 class RegistrationForm(Form):
     username=TextField('Username',[validators.Length(min=4,max=20)])
     email=TextField('Email Address',[validators.Length(min=6,max=50)])
@@ -50,6 +50,6 @@ def register_page():
             return render_template("register.html",form=form)
     except Exception as e:
         return str(e)
-
+"""
 if __name__ == "__main__":
     app.run()
