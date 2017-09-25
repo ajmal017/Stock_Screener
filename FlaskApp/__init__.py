@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash
+from flask import Flask, render_template, flash, request, redirect, url_for
 #from content_management import Content
 #from dbconnect import connection
 #from wtforms import Form
@@ -22,6 +22,11 @@ def header():
 
 @app.route('/login/',methods=['GET','POST'])
 def login():
+    if request.method=="POST":
+        attempted_username=request.form["username"]
+        attempted_password=request.form["password"]
+        if attempted_username=="admin" and attempted_password=="pass":
+            return redirect(url_for("dashboard"))
     return render_template("login.html")
 """
 class RegistrationForm(Form):
