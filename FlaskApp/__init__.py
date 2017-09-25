@@ -5,7 +5,7 @@ from dbconnect import connection
 
 from passlib.hash import sha256_crypt
 from MySQLdb import escape_string as thwart
-#import gc
+import gc
 app = Flask(__name__)
 
 @app.route('/')
@@ -23,9 +23,12 @@ def header():
 @app.route('/login/',methods=['GET','POST'])
 def login():
     if request.method=="POST":
+        c,conn=connection()
         attempted_username=request.form["username"]
         attempted_password=request.form["password"]
-        if attempted_username=="admin" and attempted_password=="pass":
+        data=c.execute("SELECT * FROM users WHERE username='%s';"%str(thwart(attempted_username)))
+        data=c.fetchone()[2]
+        if sha256_crypt.verify(attempted_password,data):
             return redirect(url_for("dashboard"))
     return render_template("login.html")
 
@@ -44,12 +47,12 @@ def register_page():
             if int(x)>0:
                 return render_template("register.html")
             else:
-                x=c.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');"%(str(thwart(username)),str(thwart(password)),str(thwart(email))))
+                c.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');"%(str(thwart(username)),str(thwart(password)),str(thwart(email))))
                 conn.commit()
-                if int(x)==0:
-                    return render_template("register.html")
-                else:
-                    return render_template("login.html")
+                c.close()
+                conn.close()
+                gc.collect()
+                return redirect(url_for("login"))
     return render_template("register.html")
 
 if __name__ == "__main__":
