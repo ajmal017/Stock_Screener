@@ -50,14 +50,7 @@
     </div>
   </div>
 </nav>
-<body>
-	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script type="text/javascript" src="{{ url_for("static",filename="js/bootstrap.min.js") }}"></script>
-	<h2>Stock_Screener</h2>
-	<p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-	<p><small>This line of text is meant to be treated as fine print.</small></p>
-	<p>The following snippet of text is <strong>rendered as bold text</strong>.</p>
-	<p>The following snippet of text is <em>rendered as italicized text</em>.</p>
-	<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
-</body>
+{% block body %}
+{% endblock %}
 </html>
+

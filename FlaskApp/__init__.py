@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, flash
 #from content_management import Content
 #from dbconnect import connection
 #from wtforms import Form
@@ -11,6 +11,18 @@ app = Flask(__name__)
 @app.route('/')
 def homepage():
     return render_template("main.html")
+
+@app.route('/dashboard/')
+def dashboard():
+    return render_template("dashboard.html")
+
+@app.route('/header/')
+def header():
+    return render_template("header.html")
+
+@app.route('/login/',methods=['GET','POST'])
+def login():
+    return render_template("login.html")
 """
 class RegistrationForm(Form):
     username=TextField('Username',[validators.Length(min=4,max=20)])
