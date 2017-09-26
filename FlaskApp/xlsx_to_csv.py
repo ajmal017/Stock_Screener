@@ -35,7 +35,7 @@ def csv_from_excel(file_name, DIR):
     d_wb.save(DIR+"Edited/"+file_name)
 
     # runs the csv_from_excel function:
-DIR = 'C:/Users/Rajesh Rao/version_control/Stock_Screener/FlaskApp/Data/Fundamental_Data/'
+DIR = 'C:/Users/Rajesh Rao/version_control/Stock_Screener_Data/Fundamental_Data/'
 os.chdir(DIR)
 files = filter(os.path.isfile, os.listdir(DIR))
 files = [os.path.join(DIR, f) for f in files] # add path to each file

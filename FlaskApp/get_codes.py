@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import csv
 
-stockList = pd.read_csv('Data/NIFTY_STOCKS.csv')
+stockList = pd.read_csv('C:/Users/Rajesh Rao/version_control/Stock_Screener_Data/NIFTY_STOCKS.csv')
 symbols = []
 for stock in stockList['Symbol']:
     driver = webdriver.Firefox()
