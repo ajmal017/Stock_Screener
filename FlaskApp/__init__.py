@@ -1,11 +1,11 @@
-from flask import Flask, render_template, flash
-#from content_management import Content
-#from dbconnect import connection
+from flask import Flask, render_template, flash, request, redirect, url_for
+from content_management import content
+from dbconnect import connection
 #from wtforms import Form
-#from passlib.hash import sha256_crypt
-#from MySQLdb import escape_string as thwart
-#import gc
 
+from passlib.hash import sha256_crypt
+from MySQLdb import escape_string as thwart
+import gc
 app = Flask(__name__)
 
 @app.route('/')
@@ -22,46 +22,38 @@ def header():
 
 @app.route('/login/',methods=['GET','POST'])
 def login():
+    if request.method=="POST":
+        c,conn=connection()
+        attempted_username=request.form["username"]
+        attempted_password=request.form["password"]
+        data=c.execute("SELECT * FROM users WHERE username='%s';"%str(thwart(attempted_username)))
+        data=c.fetchone()[2]
+        if sha256_crypt.verify(attempted_password,data):
+            return redirect(url_for("dashboard"))
     return render_template("login.html")
-"""
-class RegistrationForm(Form):
-    username=TextField('Username',[validators.Length(min=4,max=20)])
-    email=TextField('Email Address',[validators.Length(min=6,max=50)])
-    password=PasswordField('Password',[validators.Required(),
-        validators.EqualTo('confirm',message="Passwords must Match")]) 
-    confirm= PasswordField('Repeat password')
-    accept_tos=BoolenField('GG')
-    
+
 @app.route('/register/',methods=['GET','POST'])
 def register_page():
-    try:
-        form=RegistrationForm(request.form)
-        if request.method=="POST" and form.validate():
-            username=form.username.data
-            email=form.email.data
-            password=sha256_crypt.encrypt((str(form.password.data)))
-            c,conn =connection()
-            x=c.execute("select * from users where username=(%s)",
-                    (thwart(username)))
-
-            if int(x) >0:
-                flash("Username taken boi")
-                return render_template('register.html',form=form)
+    if request.method=="POST":
+        email=request.form["email"]
+        username=request.form["username"]
+        password=request.form["password"]
+        repassword=request.form["repassword"]
+        if not(password!=repassword or email==None or len(username)<3 or len(password)<3):
+            password=sha256_crypt.encrypt(str(password))
+            c,conn=connection()
+            thwart(username)
+            x=c.execute("select * from users where username='"+str(thwart(username))+"'")
+            if int(x)>0:
+                return render_template("register.html")
             else:
-                c.execute("insert into users (username,password,email) values(%s,%s,%s)"
-                (thwart(username),thwart(password),thwart(email)))
+                c.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');"%(str(thwart(username)),str(thwart(password)),str(thwart(email))))
                 conn.commit()
-                flash("thanks for registering")
                 c.close()
                 conn.close()
                 gc.collect()
-                session['logged_in']=True
-                session['username']=username
-                return redirect(url_for('dashboard'))
+                return redirect(url_for("login"))
+    return render_template("register.html")
 
-            return render_template("register.html",form=form)
-    except Exception as e:
-        return str(e)
-"""
 if __name__ == "__main__":
     app.run()
