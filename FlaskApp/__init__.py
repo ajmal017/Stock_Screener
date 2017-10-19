@@ -67,43 +67,55 @@ def Technical(comp):
     '''
     '''
     c,conn=connection()
-    c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2017")
-    graph=pygal.Line()
-    data=pd.read_csv('../../data/'+comp+'.csv')
-    data=c.fetchall()
-    date=pd.DatetimeIndex(np.array(data)[:,0])
-    print(date)
-    #graph.x_labels=date.day
-    graph.add(comp,np.array(data)[:,1])
-    graph_data2017=graph.render_data_uri()
-    c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2016")
-    graph=pygal.Line()
-    data=pd.read_csv('../../data/'+comp+'.csv')
-    data=c.fetchall()
-    date=pd.DatetimeIndex(np.array(data)[:,0])
-    print(date)
-    #graph.x_labels=date.day
-    graph.add(comp,np.array(data)[:,1])
-    graph_data2016=graph.render_data_uri()
-    c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2015")
-    graph=pygal.Line()
-    data=pd.read_csv('../../data/'+comp+'.csv')
-    data=c.fetchall()
-    date=pd.DatetimeIndex(np.array(data)[:,0])
-    print(date)
-    #graph.x_labels=date.day
-    graph.add(comp,np.array(data)[:,1])
-    graph_data2015=graph.render_data_uri()
-    c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2014")
-    graph=pygal.Line()
-    data=pd.read_csv('../../data/'+comp+'.csv')
-    data=c.fetchall()
-    date=pd.DatetimeIndex(np.array(data)[:,0])
-    print(date)
-    #graph.x_labels=date.day
-    graph.add(comp,np.array(data)[:,1])
-    graph_data2014=graph.render_data_uri()
-    return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014)
+    query = "SELECT * FROM %s_F ;"%(comp)
+    c.execute(query)
+    data = c.fetchall()
+    header = ["Year", "Sales",	"Depr.",	"Int.",	"PBT","Tax", "NP", "Div_Amt", "Eq_Share_Cap", "Reserves","Borrowings", "Oth_Liab", "Net_Block", "CWIP",	"Inv", "Oth_Assets", "Rcvbles", "Inven.", "Cash","Eq_Shares"]
+    # print(data)
+    # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
+    return render_template("fundadata.html",comp=comp, data = data, header = header)
+
+
+
+
+
+    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2017")
+    # graph=pygal.Line()
+    # data=pd.read_csv('../../data/'+comp+'.csv')
+    # data=c.fetchall()
+    # date=pd.DatetimeIndex(np.array(data)[:,0])
+    # print(date)
+    # #graph.x_labels=date.day
+    # graph.add(comp,np.array(data)[:,1])
+    # graph_data2017=graph.render_data_uri()
+    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2016")
+    # graph=pygal.Line()
+    # data=pd.read_csv('../../data/'+comp+'.csv')
+    # data=c.fetchall()
+    # date=pd.DatetimeIndex(np.array(data)[:,0])
+    # print(date)
+    # #graph.x_labels=date.day
+    # graph.add(comp,np.array(data)[:,1])
+    # graph_data2016=graph.render_data_uri()
+    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2015")
+    # graph=pygal.Line()
+    # data=pd.read_csv('../../data/'+comp+'.csv')
+    # data=c.fetchall()
+    # date=pd.DatetimeIndex(np.array(data)[:,0])
+    # print(date)
+    # #graph.x_labels=date.day
+    # graph.add(comp,np.array(data)[:,1])
+    # graph_data2015=graph.render_data_uri()
+    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2014")
+    # graph=pygal.Line()
+    # data=pd.read_csv('../../data/'+comp+'.csv')
+    # data=c.fetchall()
+    # date=pd.DatetimeIndex(np.array(data)[:,0])
+    # print(date)
+    # #graph.x_labels=date.day
+    # graph.add(comp,np.array(data)[:,1])
+    # graph_data2014=graph.render_data_uri()
+    # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
 
 
 
