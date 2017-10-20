@@ -73,7 +73,7 @@ def Technical(comp):
     header = ["Year", "Sales",	"Depr.",	"Int.",	"PBT","Tax", "NP", "Div_Amt", "Eq_Share_Cap", "Reserves","Borrowings", "Oth_Liab", "Net_Block", "CWIP",	"Inv", "Oth_Assets", "Rcvbles", "Inven.", "Cash","Eq_Shares"]
     # print(data)
     # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
-    return render_template("fundadata.html",comp=comp, data = data, header = header)
+    return render_template("compadata.html",comp=comp, data = data, header = header)
 
 
 
