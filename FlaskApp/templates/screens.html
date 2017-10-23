@@ -1,0 +1,33 @@
+{% extends "header.html" %}
+{% block body %}
+<body>
+<center>
+<img src ="{{ url_for("static",filename="images/mainlogo.png")}}">
+<h3 style='margin-top:-20px'>Stock_Screener</h3>
+</center>
+<br>
+<br>
+<center>
+<div class="row">
+  <div class="col-lg-5 pull-left">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+      </span>
+      <input type="text" class="form-control" placeholder="Search for Screens">
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+	OR
+  <div class="col-lg-5 pull-right">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Write your Own">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div><!-- /.row -->
+</center>
+</body>
+{% endblock %}
+
