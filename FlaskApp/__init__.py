@@ -14,17 +14,32 @@ import pygal
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/',methods=['GET','POST'])
 def homepage():
-    return render_template("main.html")
+    if request.method=="POST":
+        print("OK")
+        compx=request.form['search']
+        print(compx)
+        #return redirect(url_for("/login
+        return redirect(url_for("Technical",comp=compx))
+    else:
+        return render_template("main.html")
 
 @app.route('/dashboard/')
 def dashboard():
     return render_template("dashboard.html")
 
-@app.route('/header/')
+@app.route('/header/', methods=['GET','POST'])
 def header():
-    return render_template("header.html")
+    if request.method=="POST":
+        print("OK")
+        compx=request.form['search']
+        print(compx)
+        #return redirect(url_for("/login
+        return redirect(url_for("Technical",comp=compx))
+        
+    else:
+        return render_template("header.html")
 
 @app.route('/login/',methods=['GET','POST'])
 def login():
@@ -61,61 +76,65 @@ def register_page():
                 return redirect(url_for("login"))
     return render_template("register.html")
 
-@app.route('/Technical/<comp>')
+@app.route('/Technical/<comp>/',methods=['GET','POST'])
 def Technical(comp):
-    #try:
-    '''
-    '''
     c,conn=connection()
     query = "SELECT * FROM %s_F ;"%(comp)
     c.execute(query)
-    data = c.fetchall()
+    data_F = c.fetchall()
     header = ["Year", "Sales",	"Depr.",	"Int.",	"PBT","Tax", "NP", "Div_Amt", "Eq_Share_Cap", "Reserves","Borrowings", "Oth_Liab", "Net_Block", "CWIP",	"Inv", "Oth_Assets", "Rcvbles", "Inven.", "Cash","Eq_Shares"]
     # print(data)
     # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
-    return render_template("compadata.html",comp=comp, data = data, header = header)
-
-
-
-
-
-    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2017")
-    # graph=pygal.Line()
-    # data=pd.read_csv('../../data/'+comp+'.csv')
-    # data=c.fetchall()
-    # date=pd.DatetimeIndex(np.array(data)[:,0])
-    # print(date)
-    # #graph.x_labels=date.day
-    # graph.add(comp,np.array(data)[:,1])
-    # graph_data2017=graph.render_data_uri()
-    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2016")
-    # graph=pygal.Line()
-    # data=pd.read_csv('../../data/'+comp+'.csv')
-    # data=c.fetchall()
-    # date=pd.DatetimeIndex(np.array(data)[:,0])
-    # print(date)
-    # #graph.x_labels=date.day
-    # graph.add(comp,np.array(data)[:,1])
-    # graph_data2016=graph.render_data_uri()
-    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2015")
-    # graph=pygal.Line()
-    # data=pd.read_csv('../../data/'+comp+'.csv')
-    # data=c.fetchall()
-    # date=pd.DatetimeIndex(np.array(data)[:,0])
-    # print(date)
-    # #graph.x_labels=date.day
-    # graph.add(comp,np.array(data)[:,1])
-    # graph_data2015=graph.render_data_uri()
-    # c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2014")
-    # graph=pygal.Line()
-    # data=pd.read_csv('../../data/'+comp+'.csv')
-    # data=c.fetchall()
-    # date=pd.DatetimeIndex(np.array(data)[:,0])
-    # print(date)
-    # #graph.x_labels=date.day
-    # graph.add(comp,np.array(data)[:,1])
-    # graph_data2014=graph.render_data_uri()
-    # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
+    #return render_template("compadata.html",comp=comp, data_F = data_F, header = header)
+    if request.method=="POST":
+        compx=request.form['search']
+        return redirect(url_for("Technical",comp=compx))
+    else:
+        c,conn=connection()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2017")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2017=graph.render_data_uri()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2016")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        #graph.x_labels=date.day
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2016=graph.render_data_uri()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2015")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        #graph.x_labels=date.day
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2015=graph.render_data_uri()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2014")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        #graph.x_labels=date.day
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2014=graph.render_data_uri()
+        return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014)
+        
+@app.route('/screens/')
+def screens():
+    return render_template("screens.html")
 
 
 

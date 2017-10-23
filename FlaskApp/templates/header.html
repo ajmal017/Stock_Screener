@@ -26,11 +26,11 @@
         <li><a href="/screens/">Screens</a></li>
         <li><a href="/watchlist/">Watchlist</a></li>
       </ul>
-      <form  style ='margin-left:280px'class="navbar-form navbar-left" role="search">
+      <form  style ='margin-left:280px'class="navbar-form navbar-left" role="search" method="post">
         <div class="form-group">
-          <input class="form-control" placeholder="Search" type="text">
+			<input class="form-control" placeholder="search by NSE scrip" id="search" name="search" type="text" value="{{ request.form.search }}">
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="submit" class="btn btn-default" value="search" >Submit</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="/login/">Sign In</a></li>

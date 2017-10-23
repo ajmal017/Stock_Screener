@@ -1,7 +1,7 @@
 import dbconnect
 import pandas as pd
 
-COMP_NAMES = 'C:/Users/Rajesh Rao/version_control/Stock_Screener_Data/output_sql.csv'
+COMP_NAMES = '../../Stock_Screener_Data/output_sql.csv'
 c,conn=dbconnect.connection()
 NSE=pd.read_csv(COMP_NAMES)['Name'].values
 for comp in NSE:
