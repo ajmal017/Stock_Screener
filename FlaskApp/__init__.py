@@ -78,6 +78,14 @@ def register_page():
 
 @app.route('/Technical/<comp>/',methods=['GET','POST'])
 def Technical(comp):
+    c,conn=connection()
+    query = "SELECT * FROM %s_F ;"%(comp)
+    c.execute(query)
+    data_F = c.fetchall()
+    header = ["Year", "Sales",	"Depr.",	"Int.",	"PBT","Tax", "NP", "Div_Amt", "Eq_Share_Cap", "Reserves","Borrowings", "Oth_Liab", "Net_Block", "CWIP",	"Inv", "Oth_Assets", "Rcvbles", "Inven.", "Cash","Eq_Shares"]
+    # print(data)
+    # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
+    #return render_template("compadata.html",comp=comp, data_F = data_F, header = header)
     if request.method=="POST":
         compx=request.form['search']
         return redirect(url_for("Technical",comp=compx))
@@ -127,7 +135,6 @@ def Technical(comp):
 @app.route('/screens/')
 def screens():
     return render_template("screens.html")
-
 
 
 
