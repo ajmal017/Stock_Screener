@@ -1,8 +1,8 @@
 import dbconnect
 import pandas as pd
-COMP_NAMES = 'C:/Users/Rajesh Rao/version_control/Stock_Screener_Data/output.csv'
-SQL_NAME = 'C:/Users/Rajesh Rao/version_control/Stock_Screener_Data/output_sql.csv'
-DATA = 'C:/Users/Rajesh Rao/version_control/Stock_Screener_Data/Fundamental_Data/'
+COMP_NAMES = '../../Stock_Screener_Data/output.csv'
+SQL_NAME = '../../Stock_Screener_Data/output_sql.csv'
+DATA = '../../Stock_Screener_Data/Fundamental_Data/'
 c,conn=dbconnect.connection()
 NSE=pd.read_csv(COMP_NAMES)['Name'].values
 NSE1 = pd.read_csv(SQL_NAME)['Name'].values
