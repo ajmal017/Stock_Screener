@@ -1,10 +1,11 @@
-from flask import Flask, render_template, flash, request, redirect, url_for
+from flask import Flask, render_template, flash, request, redirect, url_for, session
 from content_management import content
 from dbconnect import connection
 import numpy as np
 #from wtforms import Form
 import pandas as pd
 import datetime
+
 
 from passlib.hash import sha256_crypt
 from MySQLdb import escape_string as thwart
@@ -38,7 +39,7 @@ def header():
         print(compx)
         #return redirect(url_for("/login
         return redirect(url_for("Technical",comp=compx))
-        
+
     else:
         return render_template("header.html")
 
@@ -49,8 +50,10 @@ def login():
         attempted_username=request.form["username"]
         attempted_password=request.form["password"]
         data=c.execute("SELECT * FROM users WHERE username='%s';"%str(thwart(attempted_username)))
-        data=c.fetchone()[2]
+        data=c.fetchone()
         if sha256_crypt.verify(attempted_password,data):
+            session["logged_in"] = True
+            session["username"] = data[1]
             return redirect(url_for("dashboard"))
     return render_template("login.html")
 
@@ -143,6 +146,7 @@ def Technical(comp):
         return str(e)
         
         
+    
 @app.route('/screens/')
 def screens():
     return render_template("screens.html")
@@ -153,5 +157,7 @@ def pagenotfound(e):
     return('404')
 
 
+
 if __name__ == "__main__":
+    app.secret_key = 'randshit'
     app.run()
