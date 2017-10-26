@@ -28,7 +28,10 @@ def homepage():
 
 @app.route('/dashboard/')
 def dashboard():
-    return render_template("dashboard.html")
+    if session["logged_in"] == True:    
+        return render_template("dashboard.html")
+    else:
+        return redirect(url_for("login"))
 
 @app.route('/header/', methods=['GET','POST'])
 def header():
