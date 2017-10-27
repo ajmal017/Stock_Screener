@@ -3,9 +3,16 @@
 <body>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="{{ url_for("static",filename="js/bootstrap.min.js") }}"></script>
-<center>
-	<h3 style='margin-top:-20px'>{{comp}}</h3>
-</center>
+<div class='row'>
+	<div class="col-lg-5 pull-left" color='blue'><span class="pull-left">{{comp}}</span></div>
+	<div class="col-lg-5 pull-right" color='blue'>
+		<span class="pull-right">
+        <button class="btn btn-default" type="button">Add to watchlist</button>
+		</span>
+	</div>
+</div>
+<br>
+<br>
 <div>
 
   <!-- Nav tabs -->
