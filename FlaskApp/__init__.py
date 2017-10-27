@@ -17,21 +17,21 @@ app = Flask(__name__)
 
 @app.route('/',methods=['GET','POST'])
 def homepage():
-    flash('test')
     if request.method=="POST":
         print("OK")
         compx=request.form['search']
         print(compx)
-        #return redirect(url_for("/login
         return redirect(url_for("Technical",comp=compx))
     else:
         return render_template("main.html")
 
 @app.route('/dashboard/')
 def dashboard():
-    if session["logged_in"] == True:    
-        return render_template("dashboard.html")
-    else:
+    try:
+        if session["logged_in"] == True:    
+            flash('Logged in')
+            return render_template("dashboard.html")
+    except:
         return redirect(url_for("login"))
 
 @app.route('/header/', methods=['GET','POST'])
@@ -40,7 +40,6 @@ def header():
         print("OK")
         compx=request.form['search']
         print(compx)
-        #return redirect(url_for("/login
         return redirect(url_for("Technical",comp=compx))
 
     else:
@@ -51,14 +50,24 @@ def login():
     if request.method=="POST":
         c,conn=connection()
         attempted_username=request.form["username"]
+        print(attempted_username)
         attempted_password=request.form["password"]
-        data=c.execute("SELECT * FROM users WHERE username='%s';"%str(thwart(attempted_username)))
+        data=c.execute("SELECT * FROM users WHERE username='%s';"%(str(attempted_username)))
         data=c.fetchone()
-        if sha256_crypt.verify(attempted_password,data):
+        if sha256_crypt.verify(attempted_password,data[2]):
             session["logged_in"] = True
             session["username"] = data[1]
             return redirect(url_for("dashboard"))
+        else:
+            flash('wrong username or password')
     return render_template("login.html")
+
+@app.route('/logout/')
+def logout():
+    session.clear()
+    flash("Successfully logged out")
+    gc.collect()
+    return redirect(url_for('homepage'))
 
 @app.route('/register/',methods=['GET','POST'])
 def register_page():
@@ -70,12 +79,11 @@ def register_page():
         if not(password!=repassword or email==None or len(username)<3 or len(password)<3):
             password=sha256_crypt.encrypt(str(password))
             c,conn=connection()
-            thwart(username)
-            x=c.execute("select * from users where username='"+str(thwart(username))+"'")
+            x=c.execute("select * from users where username='"+str(username)+"'")
             if int(x)>0:
                 return render_template("register.html")
             else:
-                c.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');"%(str(thwart(username)),str(thwart(password)),str(thwart(email))))
+                c.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');"%(str((username)),str((password)),str((email))))
                 conn.commit()
                 c.close()
                 conn.close()
