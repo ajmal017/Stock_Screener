@@ -13,14 +13,37 @@ import gc
 import scipy
 import pygal
 
-def screen(query):
-    
-    c.callproc(query[0], (query[1], query[2]))
+def screen(chunk):
+    c.execute("select compname from companies;")
+    comp_names = np.array(c.fetchall())
+    chunk = ["roe3", ">", "30"]
+    ans = []
+    for comp in comp_names:
+        procname =  chunk[0][:-1]
+        args = [comp[0], int(chunk[0][-1]), 0.0]
+        output = c.callproc(procname, args)
+        c.execute('select @_'+procname+'_0, @_'+procname+'_1, @_'+procname+'_2')
+        temp = c.fetchall()[0]
+        if (eval(str(temp[2])+chunk[1]+chunk[2])):
+            ans.append(temp)
+        c.close()
+        c = conn.cursor()
+    return ans
+
+
+
+
+
+
+
+
+
+
+
 app = Flask(__name__)
 
 @app.route('/',methods=['GET','POST'])
 def homepage():
-    flash('test')
     if request.method=="POST":
         print("OK")
         compx=request.form['search']
@@ -32,20 +55,7 @@ def homepage():
 
 @app.route('/dashboard/', methods = ['GET', 'POST'])
 def dashboard():
-    if session["logged_in"] == True :
-        if request.methdod == "POST":
-            QUERY = request.form["search_screen"]
-            CHUNKS = QUERY.split("AND")
-            for chunk in CHUNKS:
-                chunk = chunk.lstrip()
-                chunk = chunk.split(" ")
-                ans = screen(chunk)
 
-            '''dbms shit'''
-        else:
-            return render_template("dashboard.html")
-    else:
-        return redirect(url_for("login"))
 
 @app.route('/header/', methods=['GET','POST'])
 def header():
@@ -98,79 +108,78 @@ def register_page():
 
 @app.route('/Technical/<comp>/',methods=['GET','POST'])
 def Technical(comp):
-    try:
+    c,conn=connection()
+    query = "SELECT * FROM %s_F ;"%(comp)
+    c.execute(query)
+    data_F = c.fetchall()
+    header = ["Year", "Sales",	"Depr.",	"Int.",	"PBT","Tax", "NP", "Div_Amt", "Eq_Share_Cap", "Reserves","Borrowings", "Oth_Liab", "Net_Block", "CWIP",	"Inv", "Oth_Assets", "Rcvbles", "Inven.", "Cash","Eq_Shares"]
+    # print(data)
+    # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
+    #return render_template("compadata.html",comp=comp, data_F = data_F, header = header)
+    if request.method=="POST":
+        compx=request.form['search']
+        return redirect(url_for("Technical",comp=compx))
+    else:
         c,conn=connection()
-        query = "SELECT * FROM %s_F ;"%(comp)
-        c.execute(query)
-        data_F = c.fetchall()
-        data_F=np.array(data_F)
-        PL = ["Year", "Sales",	"Depr.",	"Int.",	"PBT","Tax", "NP", "Div_Amt"]
-        PL_data=data_F[:,:8]
-        BS=[ "Year","Eq_Share_Cap", "Reserves","Borrowings", "Oth_Liab", "Net_Block", "CWIP",	"Inv", "Oth_Assets", "Rcvbles", "Inven.", "Cash","Eq_Shares"]
-        #PL_data=[a+b for a,b in zip(data_F[:][0],data_F[:][8:])]#[data_F[:,0]]#,data_F[:,8:]]
-        BS_data=np.c_[data_F[:,0],data_F[:,8:]]
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2017")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2017=graph.render_data_uri()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2016")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        #graph.x_labels=date.day
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2016=graph.render_data_uri()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2015")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        #graph.x_labels=date.day
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2015=graph.render_data_uri()
+        c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2014")
+        graph=pygal.Line()
+        data=c.fetchall()
+        date=pd.DatetimeIndex(np.array(data)[:,0])
+        #print(date)
+        #graph.x_labels=date.day
+        graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
+        #graph.x_labels=map(str,set(date.month))
+        graph.add(comp,np.array(data)[:,1])
+        graph_data2014=graph.render_data_uri()
+        return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014)
 
-        # print(data)
-        # return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, data = data)
-        #return render_template("compadata.html",comp=comp, data_F = data_F, header = header)
-        if request.method=="POST":
-            compx=request.form['search']
-            return redirect(url_for("Technical",comp=compx))
-        else:
-            c,conn=connection()
-            c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2017")
-            graph=pygal.Line()
-            data=c.fetchall()
-            date=pd.DatetimeIndex(np.array(data)[:,0])
-            #print(date)
-            graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
-            #graph.x_labels=map(str,set(date.month))
-            graph.add(comp,np.array(data)[:,1])
-            graph_data2017=graph.render_data_uri()
-            c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2016")
-            graph=pygal.Line()
-            data=c.fetchall()
-            date=pd.DatetimeIndex(np.array(data)[:,0])
-            #print(date)
-            graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
-            #graph.x_labels=map(str,set(date.month))
-            #graph.x_labels=date.day
-            graph.add(comp,np.array(data)[:,1])
-            graph_data2016=graph.render_data_uri()
-            c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2015")
-            graph=pygal.Line()
-            data=c.fetchall()
-            date=pd.DatetimeIndex(np.array(data)[:,0])
-            #print(date)
-            graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
-            #graph.x_labels=map(str,set(date.month))
-            #graph.x_labels=date.day
-            graph.add(comp,np.array(data)[:,1])
-            graph_data2015=graph.render_data_uri()
-            c.execute("SELECT * FROM "+comp+"_T WHERE year(Date) = 2014")
-            graph=pygal.Line()
-            data=c.fetchall()
-            date=pd.DatetimeIndex(np.array(data)[:,0])
-            #print(date)
-            #graph.x_labels=date.day
-            graph.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),date)
-            #graph.x_labels=map(str,set(date.month))
-            graph.add(comp,np.array(data)[:,1])
-            graph_data2014=graph.render_data_uri()
-            return render_template("compdata.html",comp=comp,graph_data2017=graph_data2017,graph_data2016=graph_data2016,graph_data2015=graph_data2015,graph_data2014=graph_data2014, PL_data=PL_data,BS_data=BS_data, PL = PL,BS=BS)
-    except Exception as e:
-        return str(e)
-        
-        
-    
 @app.route('/screens/')
 def screens():
-    return render_template("screens.html")
+        if session["logged_in"] == True :
+            if request.methdod == "POST":
+                QUERY = request.form["search_query"]
+                dfs = []
+                CHUNKS = QUERY.split("AND")
+                for chunk in CHUNKS:
+                    chunk = chunk.lstrip()
+                    chunk = chunk.split(" ")
+                    dfs.append(pd.DataFrame(screen(chunk), columns = ["compname", "Years", chunk[0][:-1]]))
+                df_final = reduce(lambda left,right: pd.merge(left,right,on='compname'), dfs)
+                '''dbms shit'''
+            else:
+                return render_template("screens.html")
+        else:
+            return redirect(url_for("login"))
 
-
-@app.errorhandler(404)
-def pagenotfound(e):
-    return('404')
 
 
 

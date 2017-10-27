@@ -10,21 +10,25 @@
 <center>
 <div class="row">
   <div class="col-lg-5 pull-left">
+    <form  style ='margin-left:280px'class="navbar-form navbar-left" role="existingscreens" method="post">
     <div class="input-group">
       <span class="input-group-btn">
         <button class="btn btn-default" type="button">Go!</button>
       </span>
-      <input type="text" class="form-control" placeholder="Search for Screens">
+	  <input type="text" class="form-control" placeholder="Search for Screens" id="existingscreens" name="existingscreens"  value="{{ request.form.existingscreens }}">
     </div><!-- /input-group -->
+	</form>
   </div><!-- /.col-lg-6 -->
 	OR
   <div class="col-lg-5 pull-right">
+    <form  style ='margin-left:280px'class="navbar-form navbar-left" role="existingscreens" method="post">
     <div class="input-group">
-      <input type="text" class="form-control" placeholder="Write your Own">
+		<input type="text" class="form-control" placeholder="Write your Own" id="writescreen " name="writescreen" value="{{ request.form.writescreen }}">
       <span class="input-group-btn">
         <button class="btn btn-default" type="button">Go!</button>
       </span>
     </div><!-- /input-group -->
+	</form>
   </div><!-- /.col-lg-6 -->
 </div><!-- /.row -->
 </center>
