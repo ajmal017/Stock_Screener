@@ -13,6 +13,9 @@ import gc
 import scipy
 import pygal
 
+def screen(query):
+    
+    c.callproc(query[0], (query[1], query[2]))
 app = Flask(__name__)
 
 @app.route('/',methods=['GET','POST'])
@@ -26,10 +29,20 @@ def homepage():
     else:
         return render_template("main.html")
 
-@app.route('/dashboard/')
+@app.route('/dashboard/', methods = ['GET', 'POST'])
 def dashboard():
-    if session["logged_in"] == True:    
-        return render_template("dashboard.html")
+    if session["logged_in"] == True :
+        if request.methdod == "POST":
+            QUERY = request.form["search_screen"]
+            CHUNKS = QUERY.split("AND")
+            for chunk in CHUNKS:
+                chunk = chunk.lstrip()
+                chunk = chunk.split(" ")
+                ans = screen(chunk)
+
+            '''dbms shit'''
+        else:
+            return render_template("dashboard.html")
     else:
         return redirect(url_for("login"))
 
