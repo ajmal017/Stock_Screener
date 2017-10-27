@@ -18,44 +18,54 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="2017">
-	<embed type="image/svg+xml" src={{graph_data2017|safe}} style='max-width:1000px;max-height:500px;'/>
+	<embed type="image/svg+xml" src={{graph_data2017|safe}} style='max-width:1000px;max-height:1000px;'/>
 	</div>
     <div role="tabpanel" class="tab-pane" id="2016">
-	<embed type="image/svg+xml" src={{graph_data2016|safe}} style='max-width:1000px;max-height:500px;'/>
+	<embed type="image/svg+xml" src={{graph_data2016|safe}} style='max-width:1000px;max-height:1000px;'/>
 	</div>
     <div role="tabpanel" class="tab-pane" id="2015">
-	<embed type="image/svg+xml" src={{graph_data2015|safe}} style='max-width:1000px;max-height:500px;'/>
+	<embed type="image/svg+xml" src={{graph_data2015|safe}} style='max-width:1000px;max-height:1000px;'/>
 	</div>
     <div role="tabpanel" class="tab-pane" id="2014">
-	<embed type="image/svg+xml" src={{graph_data2014|safe}} style='max-width:1000px;max-height:500px;'/>
+	<embed type="image/svg+xml" src={{graph_data2014|safe}} style='max-width:1000px;max-height:1000px;'/>
 	</div>
   </div>
 
 </div>
 </body>
-<head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-<body>
 
 <div class="container">
-  <h2>{{comp}}</h2>
-  <p>Fundamental Data</p>
+  <h2>Fundamental Data</h2>
+  <p>Profit and Loss Statement</p>
   <table class="table table-bordered">
     <thead>
     <tr>
-      {% for cell in header %}
+      {% for cell in PL %}
         <th>{{cell}} </th>
       {% endfor %}
     </tr>
     </thead>
    <tbody>
-       {% for row in data %}
+       {% for row in PL_data %}
+       <tr>
+        {% for cell in row %}
+          <td>{{cell}}</td>
+        {% endfor %}
+       </tr>
+      {% endfor %}
+   </tbody>
+  </table>
+  <p>Balance Sheet Statement</p>
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      {% for cell in BS %}
+        <th>{{cell}} </th>
+      {% endfor %}
+    </tr>
+    </thead>
+   <tbody>
+       {% for row in BS_data %}
        <tr>
         {% for cell in row %}
           <td>{{cell}}</td>
