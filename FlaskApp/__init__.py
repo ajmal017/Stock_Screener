@@ -16,7 +16,6 @@ import pygal
 def screen(chunk):
     c.execute("select compname from companies;")
     comp_names = np.array(c.fetchall())
-    chunk = ["roe3", ">", "30"]
     ans = []
     for comp in comp_names:
         procname =  chunk[0][:-1]
@@ -55,8 +54,7 @@ def homepage():
 
 @app.route('/dashboard/', methods = ['GET', 'POST'])
 def dashboard():
-
-
+    return render_template("dashboard.html")
 @app.route('/header/', methods=['GET','POST'])
 def header():
     if request.method=="POST":

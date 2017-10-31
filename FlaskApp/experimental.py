@@ -1,44 +1,34 @@
-import dbconnect
-'''
-Price/Earnings
-Price/Book
-Book Value
-ROE
-ROE 3 yr
-ROE 5 yr
-PAT 1 yr Growth
-PAT 3 yr Growth
-PAT 5 yr growth
 
 ####################IMPORTANT SHIT##############################################
 '''
 PROCEDURE FOR AVERAGE VALUE OF ANY COLUMN
+PROCEDURE FOR SUM OF ANY COLUMN
+Procedure for ROE
+PROCEDURE FOR BOOK VALUE
 
+TO_RUN:
+delimiter //
+DROP PROCEDURE average_value//
 CREATE PROCEDURE average_value(comp_name varchar(20), field_name varchar(30), years int)
 BEGIN
     set @comp_name = comp_name;
     set @field_name = field_name;
-    set @sql_text = concat('select avg(',@field_name,') from (select ',@field_name,' from ',@comp_name,'_f order by Year DESC limit ',years,') as gg');
+    set @sql_text = concat('select avg(',@field_name,') from (select ',@field_name,' from nse200_F where Comp_ID = "',comp_name,'" order by Year DESC limit ',years,') as gg');
     prepare stmt1 from @sql_text;
     execute stmt1;
     deallocate prepare stmt1;
-END
-
-PROCEDURE FOR SUM OF ANY COLUMN
-
+END//
+DROP PROCEDURE sum_value//
 CREATE PROCEDURE sum_value(comp_name varchar(20), field_name varchar(30), years int, out output float)
 BEGIN
     set @comp_name = comp_name;
     set @field_name = field_name;
-    set @sql_text = concat('select sum(',@field_name,') into @outp from (select ',@field_name,' from ',@comp_name,'_f order by Year DESC limit ',years,') as gg');    prepare stmt1 from @sql_text;
+    set @sql_text = concat('select sum(',@field_name,') into @outp from (select ',@field_name,' from nse200_F where Comp_ID = "',comp_name,'" order by Year DESC limit ',years,') as gg');    prepare stmt1 from @sql_text;
     execute stmt1;
     set output = @outp;
-
     deallocate prepare stmt1;
-END
-
-Procedure for ROE
-
+END//
+DROP PROCEDURE roe//
 CREATE PROCEDURE roe(comp_name varchar(20), years int, out output float)
 BEGIN
     set @comp_name = comp_name;
@@ -47,9 +37,8 @@ BEGIN
     call sum_value(@comp_name, "Net_profit", years, @r);
     call sum_value(@comp_name, "Reserves", years, @e);
     set output = @r*100/@e;
-END
-
-PROCEDURE FOR BOOK VALUE
+END//
+DROP PROCEDURE average_book_value//
 CREATE PROCEDURE average_book_value(comp_name varchar(20), years int, out output float)
 BEGIN
     set @comp_name = comp_name;
@@ -58,7 +47,9 @@ BEGIN
     call sum_value(@comp_name, "No_of_Equity_Shares", years, @e);
     call sum_value(@comp_name, "Reserves", years, @b);
     set output = @r*100/@e;
-END
+END//
+delimiter ;
+
 
 
 em discography
@@ -86,11 +77,12 @@ for comp in comp_names:
     c = conn.cursor()
 print(ans)
 
-
-# create procedure bla(comp_name varchar(20))
-# BEGIN
-#     set @comp_name = comp_name;
-#     set @sql_text = concat('select * from ',@comp_name,'_f limit 1');
-#     prepare stmt from @sql_text;
-#     execute stmt;
-# END
+TODO
+1. paste fundamental_data in right folder
+2. past niftyind and output in right folder
+3. run store_data and populate_data
+4. run all procs in mysql
+5. check if works in init
+6. add procs for pe and pb
+7. add procs for moving avgs and adx
+8. do report
