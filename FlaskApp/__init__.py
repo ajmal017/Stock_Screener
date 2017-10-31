@@ -14,7 +14,7 @@ import scipy
 import pygal
 
 def screen(chunk):
-    c.execute("select compname from companies;")
+    c.execute("select distinct Comp_ID from nse200_F;")
     comp_names = np.array(c.fetchall())
     ans = []
     for comp in comp_names:
@@ -24,7 +24,7 @@ def screen(chunk):
         c.execute('select @_'+procname+'_0, @_'+procname+'_1, @_'+procname+'_2')
         temp = c.fetchall()[0]
         if (eval(str(temp[2])+chunk[1]+chunk[2])):
-            ans.append(temp)
+            ans.append(temp[0])
         c.close()
         c = conn.cursor()
     return ans
@@ -165,13 +165,12 @@ def screens():
         if session["logged_in"] == True :
             if request.methdod == "POST":
                 QUERY = request.form["search_query"]
-                dfs = []
+                answer = pd.DataFrame(columns = ["Company_Name", ] )
                 CHUNKS = QUERY.split("AND")
                 for chunk in CHUNKS:
                     chunk = chunk.lstrip()
                     chunk = chunk.split(" ")
                     dfs.append(pd.DataFrame(screen(chunk), columns = ["compname", "Years", chunk[0][:-1]]))
-                df_final = reduce(lambda left,right: pd.merge(left,right,on='compname'), dfs)
                 '''dbms shit'''
             else:
                 return render_template("screens.html")
