@@ -8,14 +8,36 @@ PROCEDURE FOR BOOK VALUE
 
 TO_RUN:
 delimiter //
-DROP PROCEDURE average_value//
-CREATE PROCEDURE average_value(comp_name varchar(20), field_name varchar(30), years int)
+DROP PROCEDURE avg_val//
+CREATE PROCEDURE avg_val(comp_name varchar(20), field_name varchar(30), out output float)
 BEGIN
     set @comp_name = comp_name;
     set @field_name = field_name;
-    set @sql_text = concat('select avg(',@field_name,') from (select ',@field_name,' from nse200_F where Comp_ID = "',comp_name,'" order by Year DESC limit ',years,') as gg');
+    set @r = 0.0
+    call average_value(@comp_name, @field_name, 1, @r);
+    set output = @r;
+END
+DROP PROCEDURE sum_val//
+CREATE PROCEDURE sum_val(comp_name varchar(20), field_name varchar(30), out output float)
+BEGIN
+    set @comp_name = comp_name;
+    set @field_name = field_name;
+    set @r = 0.0
+    call sum_value(@comp_name, @field_name, 1, @r);
+    set output = @r;
+END
+delimiter ;
+
+
+DROP PROCEDURE average_value//
+CREATE PROCEDURE average_value(comp_name varchar(20), field_name varchar(30), years int, out output float)
+BEGIN
+    set @comp_name = comp_name;
+    set @field_name = field_name;
+    set @sql_text = concat('select avg(',@field_name,') into @outp from (select ',@field_name,' from nse200_F where Comp_ID = "',comp_name,'" order by Year DESC limit ',years,') as gg');
     prepare stmt1 from @sql_text;
     execute stmt1;
+    set output = @outp;
     deallocate prepare stmt1;
 END//
 DROP PROCEDURE sum_value//
