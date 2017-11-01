@@ -16,7 +16,7 @@ BEGIN
     set @r = 0.0
     call average_value(@comp_name, @field_name, 1, @r);
     set output = @r;
-END
+END//
 DROP PROCEDURE sum_val//
 CREATE PROCEDURE sum_val(comp_name varchar(20), field_name varchar(30), out output float)
 BEGIN
@@ -25,7 +25,7 @@ BEGIN
     set @r = 0.0
     call sum_value(@comp_name, @field_name, 1, @r);
     set output = @r;
-END
+END//
 delimiter ;
 
 
