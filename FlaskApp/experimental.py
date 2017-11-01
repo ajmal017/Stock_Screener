@@ -13,7 +13,7 @@ CREATE PROCEDURE avg_val(comp_name varchar(20), field_name varchar(30), out outp
 BEGIN
     set @comp_name = comp_name;
     set @field_name = field_name;
-    set @r = 0.0
+    set @r = 0.0;
     call average_value(@comp_name, @field_name, 1, @r);
     set output = @r;
 END//
@@ -22,7 +22,7 @@ CREATE PROCEDURE sum_val(comp_name varchar(20), field_name varchar(30), out outp
 BEGIN
     set @comp_name = comp_name;
     set @field_name = field_name;
-    set @r = 0.0
+    set @r = 0.0;
     call sum_value(@comp_name, @field_name, 1, @r);
     set output = @r;
 END//
